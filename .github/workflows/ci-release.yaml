@@ -1,0 +1,26 @@
+name: wf-cd-release
+on:
+  pull_request:
+    branches:
+      - release/**
+    types:
+      - opened
+      - synchronize
+jobs:
+  linting-job-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository From Github Server        
+        uses: actions/checkout@v4
+        with:
+          ref: "${{github.ref}}"
+      - name: Currently Checkout branch        
+        run: echo "${{github.ref}}"
+      - name: Lint HTML Files with HTMLLint        
+        run: npx htmlhint "**/*.html"
+      - name: Lint CSS Files with Stylelint        
+        run: npx stylelint "**/*.css"
+      - name: Build Website with Parcel       
+        run: npx parcel build "**/*.css"
+      - name: Lint CSS Files with Stylelint        
+        run: npx stylelint "./src/index.html" --dist-dir "./dist" --public-url "./"
